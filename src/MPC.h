@@ -7,7 +7,7 @@
 using namespace std;
 
 // Scale factors for Cost
-#define STEERING_CONSTRAINT 0.523599f     // 30 degrees in radians
+#define STEERING_CONSTRAINT 0.436332f     // 25 degrees in radians
 #define REFERENCE_VELOCITY 40
 #define REFERENCE_ERROR 0
 #define REFERENCE_CTE 0
