@@ -20,6 +20,9 @@ The control action is on 2 actuators
 * steering angle
 * acceleration 
 
+The following image shows the state and the update equations:
+![equations](images/equations.png)
+
 The MPC computes the cross track error (cte) and orientation error based on the state, then minimizes the cost function based on the constraints and the controller computes the optimal desired steering angle and throttle which makes the car to drive on the road keeping the car to center of the road.
 
 
