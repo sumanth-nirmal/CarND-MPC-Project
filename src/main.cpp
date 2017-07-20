@@ -103,13 +103,7 @@ int main() {
 
           double delta = j[1]["steering_angle"];
           double accel = j[1]["throttle"];
-          // to account for the latency (100ms predict the state of the car after this)
-          double latency = 100.0/1000.0;
-          px += v * std::cos(psi) * latency;
-          py += v * std::sin(psi) * latency;
-          psi -= v * delta/2.67 * latency;
-          v += accel*latency;
-
+            
           // transform coordinates to car
           Eigen::VectorXd ptsx_vehicle = Eigen::VectorXd::Map(ptsx.data(), ptsx.size());
           Eigen::VectorXd ptsy_vehicle = Eigen::VectorXd::Map(ptsy.data(), ptsy.size());
@@ -130,14 +124,24 @@ int main() {
           // Orientation error, -atan(b1 + b2*x, b3* x^2) (as car is at x=0)
           double epsi = -atan(coefficients[1]);
 
+          // to account for the latency (100ms predict the state of the car after this)
+          double latency = 100.0/1000.0;
+
+          double px_act = v * latency;
+          double py_act = 0;
+          double psi_act = - v * delta * latency / 2.67;
+          double v_act = v + accel * latency;
+          double cte_act = cte + v * sin(epsi) * latency;
+          double epsi_act = epsi + psi_act;
+
           // state vector
           Eigen::VectorXd state(6);
-          state << 0, 0, 0, v, cte, epsi;
+          state << px_act, py_act, psi_act, v_act, cte_act, epsi_act;
 
           // solve the trajectory
           auto solution = mpc.Solve(state, coefficients);
           // get the steering and throttle values
-          steer_value = -solution[0]/ (deg2rad(25));
+          steer_value = -solution[0]/ deg2rad(25);
           throttle_value = solution[1];
           auto N = solution[2];
 
