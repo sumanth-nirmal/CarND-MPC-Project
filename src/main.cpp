@@ -101,6 +101,15 @@ int main() {
           double steer_value;
           double throttle_value;
 
+          double delta = j[1]["steering_angle"];
+          double accel = j[1]["throttle"];
+          // to account for the latency (100ms predict the state of the car after this)
+          double latency = 100.0/1000.0;
+          px += v * std::cos(psi) * latency;
+          py += v * std::sin(psi) * latency;
+          psi -= v * delta/2.67 * latency;
+          v += accel*latency;
+
           // transform coordinates to car
           Eigen::VectorXd ptsx_vehicle = Eigen::VectorXd::Map(ptsx.data(), ptsx.size());
           Eigen::VectorXd ptsy_vehicle = Eigen::VectorXd::Map(ptsy.data(), ptsy.size());
